@@ -1,0 +1,14 @@
+.article {
+  padding: 0 30px;
+  font-size: 14px;
+  text-align: justify;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 18px;
+  color: #0c1820;
+}

@@ -1,0 +1,23 @@
+#up-logo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 16px;
+  color: rgb(13, 13, 54);
+}
+
+.bold-font {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.normal-font {
+  font-size: 14px;
+}
+
+.stokes-title {
+  margin-left: 40px;
+  font-size: 22px;
+  font-weight: bold;
+}
