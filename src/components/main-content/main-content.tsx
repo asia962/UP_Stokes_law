@@ -1,5 +1,9 @@
+import Instructions from '../instructions/instructions';
 import Theory from '../theory/theory';
+import Animation from '../animation/animation'
 import './main-content.css';
+import Bibliography from '../bibliography/bibliography';
+import Calculator from '../calculator/calculator';
 
 interface MainContentProps {
   selectedMenuItem: string;
@@ -11,19 +15,21 @@ const MainContent: React.FC<MainContentProps> = ({ selectedMenuItem }) => {
       case 'Teoria':
         return <div><Theory /></div>;
       case 'Instrukcja':
-        return <div>Instrukcja</div>;
+        return <div><Instructions /></div>;
       case 'Animacja':
-        return <div>Animacja</div>;
+        return <div><Animation /></div>;
       case 'Kalkulator':
-        return <div>Kalkulator</div>;
+        return <div><Calculator /></div>;
       case 'Bibliografia':
-        return <div>Bibliografia</div>;
+        return <div><Bibliography /></div>;
       default:
-        return <div>Teoria</div>;
+        return <div><Theory /></div>;
     }
   };
 
-  return <div id="main-content">{renderContent()}</div>;
+  return (
+    (<div id="main-content">{renderContent()}</div>)
+  );
 };
 
 export default MainContent;
