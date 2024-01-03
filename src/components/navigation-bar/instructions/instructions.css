@@ -1,0 +1,37 @@
+.instructions-container {
+  display: flex;
+}
+
+
+
+.article {
+  padding: 0 30px;
+  font-size: 14px;
+}
+
+.section {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+h2 {
+  font-size: 18px;
+  color: #0c1820;
+}
+
+.section ol {
+  padding-left: 20px;
+}
+
+.section ol li {
+  margin-bottom: 10px;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.side-picture {
+  position: absolute;
+  right: 0;
+}

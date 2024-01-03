@@ -1,8 +1,8 @@
-import Instructions from '../instructions/instructions';
-import Theory from '../theory/theory';
-import Animation from '../animation/animation'
-import Bibliography from '../bibliography/bibliography';
-import Calculator from '../calculator/calculator';
+import Instructions from '../navigation-bar/instructions/instructions';
+import Theory from '../navigation-bar/theory/theory';
+import Animation from '../navigation-bar/animation/animation'
+import Bibliography from '../navigation-bar/bibliography/bibliography';
+import Calculator from '../navigation-bar/calculator/calculator';
 import './main-content.css';
 
 interface MainContentProps {

@@ -1,0 +1,32 @@
+.article {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.section {
+  margin: 10px 0;
+}
+
+.section h2 {
+  font-size: 1.4em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.section ol {
+  counter-reset: list-counter;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.section ol li {
+  counter-increment: list-counter;
+  margin-bottom: 10px;
+}
+
+.section ol li::before {
+  content: '[' counter(list-counter) '] ';
+}

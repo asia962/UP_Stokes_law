@@ -1,20 +1,34 @@
-import React from 'react';
-import './navigation-bar.css';
+import React, { useState } from "react";
+import "./navigation-bar.css";
 
-const NavigationBar: React.FC<{ onSelect: (selectedItem: string) => void }> = ({ onSelect }) => {
-  const menuItems = ['Teoria', 'Instrukcja', 'Animacja', 'Kalkulator', 'Bibliografia'];
-  
-  const handleItemClick = (item: string) => {
-    onSelect(item);
+const NavigationBar: React.FC<{ onSelect: (selectedItem: string) => void }> = ({
+  onSelect: renderComponent,
+}) => {
+  const menuItems = [
+    "Teoria",
+    "Instrukcja",
+    "Animacja",
+    "Kalkulator",
+    "Bibliografia",
+  ];
+  const [selectedItem, setSelectedItem] = useState<string>(menuItems[0]);
+
+  const handleItemClick = (selectedComponent: string) => {
+    setSelectedItem(selectedComponent);
+    renderComponent(selectedComponent);
   };
 
   return (
     <div id="navigation-bar">
-      <div className="navigation-bar-cell" onClick={() => handleItemClick(menuItems[0])}>Teoria</div>
-      <div className="navigation-bar-cell" onClick={() => handleItemClick(menuItems[1])}>Instrukcja</div>
-      <div className="navigation-bar-cell" onClick={() => handleItemClick(menuItems[2])}>Animacja</div>
-      <div className="navigation-bar-cell" onClick={() => handleItemClick(menuItems[3])}>Kalkulator</div>
-      <div className="navigation-bar-cell" onClick={() => handleItemClick(menuItems[4])}>Bibliografia</div>
+      {menuItems.map((item) => (
+        <div
+          key={item}
+          className={`navigation-bar-cell ${item === selectedItem ? 'selected' : ''}`}
+          onClick={() => handleItemClick(item)}
+        >
+          <p>{item}</p>
+        </div>
+      ))}
     </div>
   );
 };

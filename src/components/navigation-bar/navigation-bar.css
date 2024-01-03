@@ -30,3 +30,7 @@
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
+.navigation-bar-cell.selected p {
+  border-bottom: 2px solid #333333;
+}
