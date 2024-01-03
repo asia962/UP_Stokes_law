@@ -1,9 +1,9 @@
 import Instructions from '../instructions/instructions';
 import Theory from '../theory/theory';
 import Animation from '../animation/animation'
-import './main-content.css';
 import Bibliography from '../bibliography/bibliography';
 import Calculator from '../calculator/calculator';
+import './main-content.css';
 
 interface MainContentProps {
   selectedMenuItem: string;
