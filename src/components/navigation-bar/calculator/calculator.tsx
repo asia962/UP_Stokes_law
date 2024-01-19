@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { Page, Text, View, Document, StyleSheet, PDFViewer, PDFDownloadLink, pdf } from '@react-pdf/renderer';
+import React, { useEffect, useState } from 'react';
+import { Page, Text, View, Document, StyleSheet, pdf, Font } from '@react-pdf/renderer';
 import "./calculator.css";
 import CalculatorCell from "./calculator-cell/calculator-cell";
-import ReactPDF from '@react-pdf/renderer';
-import ReactDOM from 'react-dom';
 
 type CalculatorValues = {
   m1: number;
@@ -34,7 +32,16 @@ type CalculatorValues = {
 };
 
 const Calculator: React.FC = () => {
+  Font.register({ family: 'SourceSansPro', fonts: [
+    { src: 'https://fonts.gstatic.com/s/sourcesanspro/v14/6xK3dSBYKcSV-LCoeQqfX1RYOo3aPw.ttf' }, // font-style: normal, font-weight: normal
+    { src: 'https://fonts.gstatic.com/s/sourcesanspro/v14/6xKydSBYKcSV-LCoeQqfX1RYOo3i54rAkA.ttf', fontWeight: 600 },
+   ]});
+
   const [result, setResult] = useState<number | null>(null);
+  const [avgM, setAvgM] = useState<number>(0);
+  const [avgR, setAvgR] = useState<number>(0);
+  const [avgT, setAvgT] = useState<number>(0);
+
   const [values, setValues] = useState<CalculatorValues>({
     // m1: 0,
     // m2: 0,
@@ -88,11 +95,23 @@ const Calculator: React.FC = () => {
     t10: 12.51
   });
 
+    useEffect(() => {
+      recalculateAverages();
+  }, [values]);
+
   function handleCellChange(cellName: string, newValue: number): void {
     setValues((prevValues) => ({
       ...prevValues,
       [cellName]: newValue,
     }));
+
+    recalculateAverages();
+  }
+
+  function recalculateAverages(): void {
+    setAvgT(parseFloat(calculateAverageByKeyPrefix('t').toFixed(6)));
+    setAvgM(parseFloat(((values.m2 - values.m1) / 10).toFixed(6)));
+    setAvgR(parseFloat(calculateAverageByKeyPrefix('r').toFixed(6)));
   }
 
   function calculate(): void {
@@ -100,12 +119,8 @@ const Calculator: React.FC = () => {
       alert("Aby obliczyć wynik wypełnij wszystkie pola");
       return;
     }
-
-    const avgM: number = (values.m2 - values.m1) / 10;
-    const avgR: number = calculateAverageByKeyPrefix('r');
-    const avgT: number = calculateAverageByKeyPrefix('t');
+    
     const g: number = 9.81;
-
     const result = ((avgM - 4/3 * Math.PI * Math.pow(avgR, 3) * values.Pp) * g * avgT) / (6 * Math.PI * avgR * values.h * (1 + 2.4 * (avgR/0.0251)))
     setResult(parseFloat(result.toFixed(3)));
   }
@@ -113,14 +128,18 @@ const Calculator: React.FC = () => {
   function calculateAverageByKeyPrefix(keyPrefix: string): number {
     const keys = Object.keys(values).filter(key => key.startsWith(keyPrefix));
     const sum = keys.reduce((acc, key) => acc + values[key as keyof typeof values], 0);
-    return keys.length > 0 ? sum / keys.length : 0;
+
+    return keys.length > 0 ? sum / keys.length : 0;;
   }
+
+  
 
   const pdfStyles = StyleSheet.create({
     page: {
       flexDirection: 'column',
       backgroundColor: '#E4E4E4',
       padding: 10,
+      fontFamily: 'SourceSansPro'
     },
     section: {
       margin: 10,
@@ -129,14 +148,14 @@ const Calculator: React.FC = () => {
     },
     title: {
       fontSize: 24,
-      fontWeight: 500,
+      fontWeight: 700,
       textAlign: 'center',
       marginBottom: 20,
     },
     text: {
       fontSize: 13,
       marginBottom: 10,
-      marginLeft: 10
+      marginLeft: 10,
     },
     subtitle: {
       fontSize: 18,
@@ -169,31 +188,31 @@ const Calculator: React.FC = () => {
     <Document>
       <Page size="A4" style={pdfStyles.page}>
         <View style={pdfStyles.section}>
-          <Text style={pdfStyles.title}>Pomiaru lepkosci cieczy metoda Stokesa</Text>
+          <Text style={pdfStyles.title}>Wyznaczanie lepkości cieczy metodą Stokesa</Text>
   
           {/* Tytuł "Dane ogólne" */}
           <Text style={pdfStyles.subtitle}>Dane ogólne:</Text>
-          <Text style={pdfStyles.text}>Masa naczynia bez kulek m1 [kg]: {values.m1} kg</Text>
-          <Text style={pdfStyles.text}>Masa naczynia bez kulek m2 [kg]: {values.m2} kg</Text>
-          <Text style={pdfStyles.text}>Srednica cylindra R [m]: {values.R} m</Text>
-          <Text style={pdfStyles.text}>Zakres pomiaru opadania kulki h [m]: {values.h} m</Text>
-          <Text style={pdfStyles.text}>Gestosc badanej cieczy Pp [kg/m3]: {values.Pp} kg/m³</Text>
+          <Text style={pdfStyles.text}>Masa naczynia bez kulek m1 [kg]: {values.m1} [kg]</Text>
+          <Text style={pdfStyles.text}>Masa naczynia bez kulek m2 [kg]: {values.m2} [kg]</Text>
+          <Text style={pdfStyles.text}>Średnica cylindra R [m]: {values.R} [m]</Text>
+          <Text style={pdfStyles.text}>Zakres pomiaru opadania kulki h [m]: {values.h} [m]</Text>
+          <Text style={pdfStyles.text}>Gęstość badanej cieczy pp [kg/m3]: {values.Pp} [kg/m³]</Text>
   
           {/* Przerwa */}
           <Text style={pdfStyles.break}></Text>
   
           {/* Tytuł "Pomiary promienia" */}
           <Text style={pdfStyles.subtitle}>Pomiary promienia:</Text>
-          <Text style={pdfStyles.text}>Promien kulki r1: {values.r1}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r2: {values.r2}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r3: {values.r3}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r4: {values.r4}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r5: {values.r5}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r6: {values.r6}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r7: {values.r7}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r8: {values.r8}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r9: {values.r9}</Text>
-          <Text style={pdfStyles.text}>Promien kulki r10: {values.r10}</Text>
+          <Text style={pdfStyles.text}>Promień kulki r1: {values.r1} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r2: {values.r2} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r3: {values.r3} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r4: {values.r4} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r5: {values.r5} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r6: {values.r6} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r7: {values.r7} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r8: {values.r8} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r9: {values.r9} [m]</Text>
+          <Text style={pdfStyles.text}>Promień kulki r10: {values.r10} [m]</Text>
           {/* ... Reszta pomiarów promieni kulki r3 do r10 ... */}
   
           {/* Przerwa */}
@@ -201,23 +220,23 @@ const Calculator: React.FC = () => {
   
           {/* Tytuł "Pomiary czasu" */}
           <Text style={pdfStyles.subtitle}>Pomiary czasu:</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t1: {values.t1}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t2: {values.t2}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t3: {values.t3}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t4: {values.t4}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t5: {values.t5}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t6: {values.t6}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t7: {values.t7}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t8: {values.t8}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t9: {values.t9}</Text>
-          <Text style={pdfStyles.text}>Czas opadania kulki t10: {values.t10}</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t1: {values.t1} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t2: {values.t2} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t3: {values.t3} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t4: {values.t4} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t5: {values.t5} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t6: {values.t6} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t7: {values.t7} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t8: {values.t8} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t9: {values.t9} [s]</Text>
+          <Text style={pdfStyles.text}>Czas opadania kulki t10: {values.t10} [s]</Text>
   
           {/* Przerwa */}
           <Text style={pdfStyles.break}></Text>
   
           {/* Tytuł "Wyniki" */}
           <Text style={pdfStyles.subtitle}>Wyniki:</Text>
-          <Text style={pdfStyles.text}>Uzyskana lepkosc cieczy wynosi {result !== null ? result.toFixed(3) : 'N/A'} m²/s</Text>
+          <Text style={pdfStyles.text}>Uzyskana lepkość cieczy wynosi {result !== null ? result.toFixed(3) : 'N/A'} [m²/s]</Text>
           <Text style={pdfStyles.text}>Wnioski: {conclusions}</Text>
         </View>
       </Page>
@@ -273,15 +292,12 @@ const Calculator: React.FC = () => {
 
   return (
     <div className='calculator-container'>
-      <div className="calculator-cell-title"><p>Dane ogólne</p></div>
+      <div className="calculator-cell-title"><p>Pomiary masy kulki</p></div>
       <div className="calculator-cell-container">
         <CalculatorCell name="m1" label="m1 [kg]" value={values.m1} onChange={handleCellChange} />
         <CalculatorCell name="m2" label="m2 [kg]" value={values.m2} onChange={handleCellChange} />
-        <CalculatorCell name="R" label="R [m]" value={values.R} onChange={handleCellChange} />
-        <CalculatorCell name="h" label="h [m]" value={values.h} onChange={handleCellChange} />
-        <CalculatorCell name="Pp" label="ρp [kg/m3]" value={values.Pp} onChange={handleCellChange} />
       </div>
-      
+
       <div className="calculator-cell-title"><p>Pomiary promienia kulek</p></div>
       <div className="calculator-cell-container">
         <CalculatorCell name="r1" label="r1 [m]" value={values.r1} onChange={handleCellChange} />
@@ -309,13 +325,26 @@ const Calculator: React.FC = () => {
         <CalculatorCell name="t9" label="t9 [s]" value={values.t9} onChange={handleCellChange} />
         <CalculatorCell name="t10" label="t10 [s]" value={values.t10} onChange={handleCellChange} />
       </div>
+
+      <br />
+
+      <p className='average-value-text'>Średnia masa kulki: {avgM} [kg]</p>
+      <p className='average-value-text'>Średni promień kulki: {avgR} [m]</p>
+      <p className='average-value-text'>Średni czas opadania kulki: {avgT} [s]</p>
+
+      <div className="calculator-cell-title"><p>Dane ogólne</p></div>
+      <div className="calculator-cell-container">
+        <CalculatorCell name="R" label="R [m]" value={values.R} onChange={handleCellChange} />
+        <CalculatorCell name="h" label="h [m]" value={values.h} onChange={handleCellChange} />
+        <CalculatorCell name="Pp" label="ρp [kg/m3]" value={values.Pp} onChange={handleCellChange} />
+      </div>
       
       <div className="legend">
         <p>Legenda:</p>
         <ul>
-          <li>m<sub>1</sub> - masa pustego cylindra</li>
-          <li>m<sub>2</sub> - masa cylindra z kulkami</li>
-          <li>R - średnica cylindra</li>
+          <li>m<sub>1</sub> - masa pustego naczynia</li>
+          <li>m<sub>2</sub> - masa naczynia z kulkami</li>
+          <li>R - średnica naczynia</li>
           <li>h - zakres pomiaru opadania kulki</li>
           <li>ρ<sub>ρ</sub> - gęstość badanej cieczy</li>
           <li>r<sub>x</sub> - promień kulki <sub>x</sub></li>

@@ -24,16 +24,14 @@ const CalculatorCell: React.FC<CalculatorCellProps> = ({ name, label, value, onC
   };
 
   return (
-    <div className='calculator-cell-container'>
-      <div className="calculator-cell">
-        <p className="calculator-cell-label">{label}</p>
-        <input
-          className="calculator-cell-input"
-          type="text" // Changed to text to handle the decimal input correctly
-          value={inputValue}
-          onChange={handleChange}
-        />
-      </div>
+    <div className="calculator-cell">
+      <p className="calculator-cell-label">{label}</p>
+      <input
+        className="calculator-cell-input"
+        type="text" // Changed to text to handle the decimal input correctly
+        value={inputValue}
+        onChange={handleChange}
+      />
     </div>
   );
 }
