@@ -95,3 +95,7 @@ button:hover {
   padding: 10px;
   resize: none;
 }
+
+.average-value-text {
+  font-size: 20px;
+}
