@@ -1,6 +1,6 @@
 import React from "react";
 import "./instructions.css";
-import picture1 from '../../../assets/stokes-rys1.png'
+import picture1 from '../../../assets/rys4.png'
 import picture2 from '../../../assets/stokes-rys2.png'
 
 const Instructions: React.FC = () => {
@@ -57,7 +57,8 @@ const Instructions: React.FC = () => {
           </ol>
         </div>
       </div>
-      <img src={picture1} width={150}/>
+      <div style={{ margin: '20px'}}>
+      <img src={picture1} width={250} /></div>
     </div>
   );
 };
